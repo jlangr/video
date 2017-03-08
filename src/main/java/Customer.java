@@ -19,9 +19,7 @@ public class Customer {
 
     public String statement() {
         String result = header();
-        for (Rental rental: rentals) {
-            result += detailRow(rental);
-        }
+        for (Rental rental: rentals) result += detailRow(rental);
         result += totalAmountFooter();
         result += totalPointsFooter();
         return result;
@@ -32,23 +30,15 @@ public class Customer {
     }
 
     private String totalAmountFooter() {
-        return "You owed " + String.valueOf(calculateTotalAmount()) + "\n";
+        return "You owed " + String.valueOf(calculateTotalPrice()) + "\n";
     }
 
     private int calculateTotalFreqRenterPoints() {
-        int frequentRenterPoints = 0;
-        for (Rental rental: rentals) {
-            frequentRenterPoints += calculateFrequentRenterPoints(rental);
-        }
-        return frequentRenterPoints;
+        return rentals.stream().mapToInt(this::calculateFrequentRenterPoints).sum();
     }
 
-    private double calculateTotalAmount() {
-        double totalAmount = 0;
-        for (Rental rental: rentals) {
-            totalAmount += calculatePrice(rental);
-        }
-        return totalAmount;
+    private double calculateTotalPrice() {
+        return rentals.stream().mapToDouble(this::calculatePrice).sum();
     }
 
     private String detailRow(Rental rental) {
